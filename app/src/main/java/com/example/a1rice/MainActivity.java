@@ -1,4 +1,4 @@
-package com.example.a1rice;
+ package com.example.a1rice;
 
 import androidx.appcompat.app.AppCompatActivity;
 
