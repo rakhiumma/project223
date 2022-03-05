@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/drawable/round_bg.xml" value="0.2555" />
         <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/activity_signin.xml" value="0.264" />
+        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/loading_rice.xml" value="0.264" />
       </map>
     </option>
   </component>
