@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">A1 Rice</string>
-    <string name="signup"><u>Sign up</u></string>
+    <string name="signup"><u>Create Account</u></string>
     <string name="forget"><u>Forgot Password</u></string>
 </resources>
