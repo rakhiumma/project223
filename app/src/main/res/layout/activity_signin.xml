@@ -17,11 +17,86 @@
         android:scaleType="fitCenter"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome \nBack"
+        android:textSize="38dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="Mobile"
+        android:background="@drawable/ed_bg"
+        android:layout_marginTop="30dp"
+        android:textColorHint="@color/white"
+        android:paddingLeft="20dp"
+        android:maxLength="10"
+        android:gravity="center"
+        android:textSize="25dp"
+        android:inputType="number"
+        android:letterSpacing="0.1"
+        android:textColor="@color/white"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="OTP"
+        android:background="@drawable/ed_bg"
+        android:layout_marginTop="20dp"
+        android:textColorHint="@color/white"
+        android:paddingLeft="20dp"
+        android:textSize="25dp"
+        android:visibility="invisible"
+        android:gravity="center"
+        android:inputType="number"
+        android:letterSpacing="0.1"
+        android:textColor="@color/white"
+        />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/button_round_bg"
+            android:src="@drawable/ic_baseline_keyboard_double_arrow_right_24" />
 
+        <TextView
+            android:id="@+id/signup_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="100dp"
+            android:text="@string/signup"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+        <TextView
+            android:id="@+id/forgot_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forget"
+            android:layout_marginTop="100dp"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            />
 
+    </RelativeLayout>
 
 
 </LinearLayout>
