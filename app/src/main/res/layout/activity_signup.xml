@@ -28,6 +28,7 @@
         />
 
     <EditText
+        android:id="@+id/fname_ed"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
@@ -37,14 +38,14 @@
         android:layout_marginTop="30dp"
         android:textColorHint="@color/white"
         android:paddingLeft="20dp"
-        android:maxLength="10"
         android:textSize="22dp"
-        android:inputType="text"
+        android:inputType="textPersonName"
         android:letterSpacing="0.1"
         android:textColor="@color/white"
         android:textAllCaps="true"
         />
     <EditText
+        android:id="@+id/lname_ed"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
@@ -54,14 +55,14 @@
         android:layout_marginTop="10dp"
         android:textColorHint="@color/white"
         android:paddingLeft="20dp"
-        android:maxLength="10"
         android:textSize="22dp"
-        android:inputType="number"
+        android:inputType="textPersonName"
         android:letterSpacing="0.1"
         android:textColor="@color/white"
         android:textAllCaps="true"
         />
     <EditText
+        android:id="@+id/email_ed"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
@@ -71,14 +72,14 @@
         android:layout_marginTop="10dp"
         android:textColorHint="@color/white"
         android:paddingLeft="20dp"
-        android:maxLength="10"
         android:textSize="22dp"
-        android:inputType="number"
+        android:inputType="textEmailAddress"
         android:letterSpacing="0.1"
         android:textColor="@color/white"
         android:textAllCaps="true"
         />
     <EditText
+        android:id="@+id/city_ed"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
@@ -88,9 +89,8 @@
         android:layout_marginTop="10dp"
         android:textColorHint="@color/white"
         android:paddingLeft="20dp"
-        android:maxLength="10"
         android:textSize="22dp"
-        android:inputType="number"
+        android:inputType="text"
         android:letterSpacing="0.1"
         android:textColor="@color/white"
         android:textAllCaps="true"
@@ -103,6 +103,7 @@
         android:layout_marginTop="20dp">
 
         <ImageButton
+            android:id="@+id/sgn_btn"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerHorizontal="true"

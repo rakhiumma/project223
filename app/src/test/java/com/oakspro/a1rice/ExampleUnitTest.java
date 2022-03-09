@@ -1,4 +1,4 @@
-package com.example.a1rice;
+package com.oakspro.a1rice;
 
 import org.junit.Test;
 

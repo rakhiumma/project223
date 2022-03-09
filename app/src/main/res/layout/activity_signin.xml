@@ -27,24 +27,47 @@
         android:layout_marginTop="15dp"
         />
 
-    <EditText
-        android:id="@+id/mobile_ed"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:hint="Mobile"
-        android:background="@drawable/ed_bg"
-        android:layout_marginTop="30dp"
-        android:textColorHint="@color/white"
-        android:paddingLeft="20dp"
-        android:maxLength="10"
-        android:gravity="center"
-        android:textSize="22dp"
-        android:inputType="number"
-        android:letterSpacing="0.1"
-        android:textColor="@color/white"
-        />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <EditText
+            android:id="@+id/mobile_ed"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/ed_bg"
+            android:ems="10"
+            android:hint="Mobile"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:paddingBottom="8dp"
+            android:paddingStart="48dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="8dp"
+            android:textColorHint="@color/white"
+            android:paddingLeft="20dp"
+            android:gravity="center"
+            android:textSize="22dp"
+            android:letterSpacing="0.1"
+            android:textColor="@color/white"
+            >
+        </EditText>
+
+        <TextView
+            android:id="@+id/prefix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:layout_marginLeft="80dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="22dp"
+            android:text="+91" />
+    </FrameLayout>
     <EditText
         android:id="@+id/otp_ed"
         android:layout_width="match_parent"

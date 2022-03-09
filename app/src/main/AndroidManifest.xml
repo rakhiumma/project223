@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.a1rice">
+    package="com.oakspro.a1rice">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,13 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.A1Rice">
         <activity
-            android:name=".SignupActivity"
+            android:name="com.oakspro.a1rice.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".SigninActivity"
+            android:name="com.oakspro.a1rice.SigninActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.oakspro.a1rice.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.A1RiceMain">
             <intent-filter>

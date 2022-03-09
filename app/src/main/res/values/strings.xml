@@ -2,4 +2,5 @@
     <string name="app_name">A1 Rice</string>
     <string name="signup"><u>Create Account</u></string>
     <string name="forget"><u>Forgot Password</u></string>
+    <string name="core_api">https://a1rice.in/</string>
 </resources>
