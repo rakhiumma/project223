@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -31,11 +33,16 @@ public class SignupActivity extends AppCompatActivity {
     ImageButton signupBtn;
     String api="https://a1rice.in/app_api/signup_api.php";
     ProgressDialog progressDialog;
-
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
+    String fname,lname,email,city,name,mobile, useridS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        preferences=getSharedPreferences("MyLogin", MODE_PRIVATE);
+        editor=preferences.edit();
 
         fnameEd=findViewById(R.id.fname_ed);
         lnameEd=findViewById(R.id.lname_ed);
@@ -43,7 +50,7 @@ public class SignupActivity extends AppCompatActivity {
         cityEd=findViewById(R.id.city_ed);
         signupBtn=findViewById(R.id.sgn_btn);
 
-        String mobile=getIntent().getStringExtra("mobile");
+        mobile=getIntent().getStringExtra("mobile");
 
         //progress
         progressDialog=new ProgressDialog(SignupActivity.this);
@@ -52,11 +59,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String fname=fnameEd.getText().toString();
-                String lname=lnameEd.getText().toString();
-                String email=emailEd.getText().toString();
-                String city=cityEd.getText().toString();
-                String name=fname+" "+lname;
+                fname=fnameEd.getText().toString();
+                lname=lnameEd.getText().toString();
+                email=emailEd.getText().toString();
+                city=cityEd.getText().toString();
+                name=fname+" "+lname;
 
                 signupServer(name, email, city, mobile);
 
@@ -82,9 +89,25 @@ public class SignupActivity extends AppCompatActivity {
                     JSONObject jsonObject=new JSONObject(response);
                     String status=jsonObject.getString("status");
                     if (status.equals("SUCCESS")){
+
+                        useridS=jsonObject.getString("userid");
+                        //store data to sharedpreference
+
+                        editor.putBoolean("islogged", true);
+                        editor.putString("name", name);
+                        editor.putString("mobile", mobile);
+                        editor.putString("userid", useridS);
+                        editor.putString("address", city);
+                        editor.commit();
+
                         progressDialog.dismiss();
                         Toast.makeText(SignupActivity.this, "Signup Success", Toast.LENGTH_SHORT).show();
-
+                        Intent intent=new Intent(SignupActivity.this, DashActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }else{
+                        progressDialog.dismiss();
+                        Toast.makeText(SignupActivity.this, "Signup Failed", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

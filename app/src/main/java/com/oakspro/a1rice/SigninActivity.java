@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -24,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,10 +49,16 @@ public class SigninActivity extends AppCompatActivity {
     String api_send_otp;
     String prof_status;
     String mobileF=null;
+    String nameS,mobileS,statusS,useridS,addressS,pincodeS,locationS;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+
+        preferences=getSharedPreferences("MyLogin", MODE_PRIVATE);
+        editor=preferences.edit();
 
         api_send_otp=getResources().getString(R.string.core_api)+"/app_api/send_otp_sms.php";
         mobileEd=findViewById(R.id.mobile_ed);
@@ -147,6 +155,17 @@ public class SigninActivity extends AppCompatActivity {
                             finish();
                         }else{
 
+                            //store data sharedpreference
+
+                            editor.putBoolean("islogged", true);
+                            editor.putString("name", nameS);
+                            editor.putString("mobile", mobileS);
+                            editor.putString("userid", useridS);
+                            editor.putString("location", locationS);
+                            editor.putString("pincode", pincodeS);
+                            editor.putString("address", addressS);
+                            editor.commit();
+
                             //open dashboard
                             Intent intent=new Intent(SigninActivity.this, DashActivity.class);
                             startActivity(intent);
@@ -218,6 +237,22 @@ public class SigninActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         mobileF=mobile_s;
                         Toast.makeText(SigninActivity.this, "OTP sent to your mobile", Toast.LENGTH_SHORT).show();
+
+                        if(prof_status.equals("1")){
+                            JSONArray jsonArray=jsonObject.getJSONArray("details");
+                            for (int i=0; i<=jsonArray.length(); i++){
+                                JSONObject object=jsonArray.getJSONObject(i);
+
+                                nameS=object.getString("name");
+                                useridS=object.getString("userid");
+                                mobileS=object.getString("mobile");
+                                locationS=object.getString("location");
+                                pincodeS=object.getString("pincode");
+                                addressS=object.getString("address");
+                                statusS=object.getString("status");
+
+                            }
+                        }
 
                         timerTv.setVisibility(View.VISIBLE);
                         new CountDownTimer(120000, 1000) {
