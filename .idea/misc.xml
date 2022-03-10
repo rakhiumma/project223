@@ -3,12 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/bottom_bg.xml" value="0.1645" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/button_round_bg.xml" value="0.1735" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/ed_bg.xml" value="0.1735" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_dash.xml" value="0.18" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_signin.xml" value="0.17" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_signup.xml" value="0.15" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/loading_rice.xml" value="0.11414473684210526" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/menu/bottom_nav_menu.xml" value="0.12894736842105264" />
       </map>
     </option>
   </component>
