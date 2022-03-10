@@ -140,13 +140,18 @@ public class SigninActivity extends AppCompatActivity {
                         nextB=2;
 
                         Toast.makeText(SigninActivity.this, "Verified.......", Toast.LENGTH_SHORT).show();
-                        if(prof_status.equals("1")){
+                        if(prof_status.equals("0")){
                             Intent intent=new Intent(SigninActivity.this, SignupActivity.class);
                             intent.putExtra("mobile", mobileF);
                             startActivity(intent);
                             finish();
                         }else{
+
                             //open dashboard
+                            Intent intent=new Intent(SigninActivity.this, DashActivity.class);
+                            startActivity(intent);
+                            finish();
+
                         }
 
 
