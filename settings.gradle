@@ -3,7 +3,6 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         google()
-
     }
 }
 dependencyResolutionManagement {
@@ -11,6 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
+
     }
 }
 rootProject.name = "A1 Rice"
