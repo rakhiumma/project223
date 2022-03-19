@@ -1,18 +1,31 @@
 package com.oakspro.a1rice.ui.home;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,8 +36,28 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.oakspro.a1rice.CategoryAdapter;
 import com.oakspro.a1rice.CategoryListData;
+import com.oakspro.a1rice.DashActivity;
 import com.oakspro.a1rice.R;
 import com.oakspro.a1rice.SignupActivity;
 import com.oakspro.a1rice.SliderImgAdapter;
@@ -53,12 +86,16 @@ public class HomeFragment extends Fragment {
     ProgressDialog progressDialog;
     ArrayList<SliderItem> adsArray=new ArrayList<>();
     SliderView adSlider;
+    double latitude;
+    double longitude;
+    final static int REQUEST_LOCATION = 199;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
         progressDialog=new ProgressDialog(getContext());
         preferences=getContext().getSharedPreferences("MyLogin", Context.MODE_PRIVATE);
 
@@ -68,9 +105,49 @@ public class HomeFragment extends Fragment {
         gridView=root.findViewById(R.id.gridview_rice);
 
         getCategory_Ads();
+        checkGps();
+      //  alertCode();
+
+
 
 
         return root;
+    }
+
+    private void checkGps() {
+        LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            /*
+            new AlertDialog.Builder(getContext())
+                    .setMessage("Turn on Location")
+                    .setPositiveButton("Turn ON", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            getActivity().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("Cancel",null)
+                    .show();
+
+             */
+            displayLocationSettingsRequest(getContext());
+        }
+    }
+
+    private void alertCode() {
+
     }
 
     private void getCategory_Ads() {
@@ -154,6 +231,134 @@ public class HomeFragment extends Fragment {
         };
         RequestQueue requestQueue= Volley.newRequestQueue(getContext());
         requestQueue.add(request);
+    }
+    private void coderLoc() {
+        Dexter.withActivity(getActivity())
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                        LocationRequest locationRequest = new LocationRequest();
+                        locationRequest.setInterval(10000);
+                        locationRequest.setFastestInterval(3000);
+                        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        LocationServices.getFusedLocationProviderClient(getContext())
+                                .requestLocationUpdates(locationRequest, new LocationCallback() {
+                                    @Override
+                                    public void onLocationResult(@NonNull LocationResult locationResult) {
+                                        super.onLocationResult(locationResult);
+                                        LocationServices.getFusedLocationProviderClient(getContext())
+                                                .removeLocationUpdates(this);
+                                        if (locationResult != null && locationResult.getLocations().size() > 0) {
+                                            int latestLocationIndex = locationResult.getLocations().size() - 1;
+                                            latitude = locationResult.getLocations().get(latestLocationIndex).getLatitude();
+                                            longitude = locationResult.getLocations().get(latestLocationIndex).getLongitude();
+                                            Log.i("Location", "Lat: "+latitude+" Long: "+longitude);
+                                        }
+                                    }
+                                }, Looper.getMainLooper());
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                        PermissionListener dialogPermissionListener =
+                                DialogOnDeniedPermissionListener.Builder
+                                        .withContext(getContext())
+                                        .withTitle("Location")
+                                        .withMessage("Location permission needed to find nearest Rice Stores")
+                                        .withButtonText(android.R.string.ok)
+                                        .withIcon(R.mipmap.ic_launcher)
+                                        .build();
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+    }
+    private void displayLocationSettingsRequest(Context context) {
+
+        View view=LayoutInflater.from(getContext()).inflate(R.layout.location_dialog, null, true);
+        AlertDialog builder2=new AlertDialog.Builder(getContext()).create();
+        builder2.setView(view);
+        builder2.setCanceledOnTouchOutside(true);
+        view.findViewById(R.id.enable_txt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                builder2.dismiss();
+                builder2.cancel();
+                coderLoc();
+
+                GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
+                        .addApi(LocationServices.API).build();
+                googleApiClient.connect();
+
+                LocationRequest locationRequest = LocationRequest.create();
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                locationRequest.setInterval(10000);
+                locationRequest.setFastestInterval(10000 / 2);
+
+                LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+                builder.setAlwaysShow(true);
+
+                PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+                result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                    @Override
+                    public void onResult(LocationSettingsResult result) {
+                        final Status status = result.getStatus();
+                        switch (status.getStatusCode()) {
+                            case LocationSettingsStatusCodes.SUCCESS:
+                                Log.i("TAG", "All location settings are satisfied.");
+                                builder2.dismiss();
+                                builder2.cancel();
+                                break;
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                Log.i("TAG", "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the result
+                                    // in onActivityResult().
+                                    status.startResolutionForResult(getActivity(),REQUEST_LOCATION);
+                                } catch (IntentSender.SendIntentException e) {
+                                    Log.i("TAG", "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                Log.i("TAG", "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                                break;
+                        }
+                    }
+                });
+            }
+        });
+        view.findViewById(R.id.select_txt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openAddressBook();
+            }
+        });
+        builder2.show();
+    }
+
+    private void openAddressBook() {
+        BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(getContext());
+        bottomSheetDialog.setContentView(R.layout.address_book);
+        bottomSheetDialog.setCanceledOnTouchOutside(false);
+        bottomSheetDialog.show();
     }
 
     @Override
