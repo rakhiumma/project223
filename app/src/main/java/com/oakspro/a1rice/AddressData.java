@@ -1,7 +1,7 @@
 package com.oakspro.a1rice;
 
 public class AddressData {
-    String address_id, address_name, address_type, address_info, address_pincode, address_area, address_city;
+    String address_id, address_name, address_type, address_info, address_pincode, address_area, address_city, address_state;
 
     public String getAddress_id() {
         return address_id;
@@ -41,6 +41,14 @@ public class AddressData {
 
     public void setAddress_pincode(String address_pincode) {
         this.address_pincode = address_pincode;
+    }
+
+    public String getAddress_state() {
+        return address_state;
+    }
+
+    public void setAddress_state(String address_state) {
+        this.address_state = address_state;
     }
 
     public String getAddress_area() {
