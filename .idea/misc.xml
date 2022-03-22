@@ -6,31 +6,21 @@
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/bottom_bg.xml" value="0.1645" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/button_round_bg.xml" value="0.1735" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/ed_bg.xml" value="0.1735" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/drawable/ic_baseline_arrow_drop_down_circle_24.xml" value="0.1645" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_addaddress.xml" value="0.15" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_dash.xml" value="0.18" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_signin.xml" value="0.17" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/activity_signup.xml" value="0.15" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/address_book.xml" value="0.2" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/address_item.xml" value="0.25" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/loading_rice.xml" value="0.11414473684210526" />
+        <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/layout/spinner_item.xml" value="0.16" />
         <entry key="..\:/Users/OAKSPRO CEO/AndroidStudioProjects/A1Rice/app/src/main/res/menu/bottom_nav_menu.xml" value="0.12894736842105264" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/drawable/drop_bg.xml" value="0.1955" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/drawable/rating_bg_green.xml" value="0.1365" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/activity_addaddress.xml" value="0.176" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/activity_dash.xml" value="0.264" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/activity_signin.xml" value="0.22552083333333334" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/activity_signup.xml" value="0.25" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/address_book.xml" value="0.16216216216216217" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/address_item.xml" value="0.16216216216216217" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/fragment_home.xml" value="0.16996047430830039" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/grid_item.xml" value="0.25" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/location_dialog.xml" value="0.2" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/slider_item.xml" value="0.1605351170568562" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/layout/store_item.xml" value="0.176" />
-        <entry key="..\:/Users/user1/AndroidStudioProjects/project223/app/src/main/res/menu/address_menu.xml" value="0.16216216216216217" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

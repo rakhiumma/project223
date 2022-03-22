@@ -1,17 +1,24 @@
 package com.oakspro.a1rice;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -25,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AddaddressActivity extends AppCompatActivity {
@@ -32,8 +40,10 @@ public class AddaddressActivity extends AppCompatActivity {
     EditText addNameEd, addHnoed,addPincodeEd, addStateEd;
     Spinner addAreaEd, addCityEd;
     Button saveBtn;
-    String[] city={"Hanamkonda", "Warangal"};
-    private RequestQueue mRequestQueue;
+    String[] city={"Select City","Hanamkonda", "Warangal"};
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
+    String api="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +57,22 @@ public class AddaddressActivity extends AppCompatActivity {
         addCityEd=findViewById(R.id.adCity_ed);
         addStateEd=findViewById(R.id.adState_ed);
         saveBtn=findViewById(R.id.save_btn);
-        mRequestQueue = Volley.newRequestQueue(AddaddressActivity.this);
+        preferences=getSharedPreferences("MyLogin", Context.MODE_PRIVATE);
+        String profileID=preferences.getString("userid", null);
+        api=getResources().getString(R.string.core_api)+"app_api/add_address_api.php";
         
 
-        ArrayAdapter<String> cityAdapter=new ArrayAdapter<String >(this, android.R.layout.simple_spinner_dropdown_item, city);
+        ArrayAdapter<String> cityAdapter=new ArrayAdapter<String >(this, R.layout.spinner_item, city){
+
+            @Override
+            public boolean isEnabled(int position) {
+                if (position==0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+        };
         addCityEd.setAdapter(cityAdapter);
 
         addPincodeEd.addTextChangedListener(new TextWatcher() {
@@ -64,8 +86,8 @@ public class AddaddressActivity extends AppCompatActivity {
                 if (charSequence.length()==6){
                     String pincode=addPincodeEd.getText().toString();
                     String api="https://api.postalpincode.in/pincode/"+pincode;
-                    getPincodeDetails(api);
-                  //  getDataFromPinCode(api);
+                    //getPincodeDetails(api);
+                    getDataFromPinCode(api);
                 }
             }
 
@@ -75,102 +97,103 @@ public class AddaddressActivity extends AppCompatActivity {
             }
         });
 
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String adN=addNameEd.getText().toString();
+                String adH=addHnoed.getText().toString();
+                String adC=addCityEd.getSelectedItem().toString();
+                String adP=addPincodeEd.getText().toString();
+                String adA=addAreaEd.getSelectedItem().toString();
+                String adS=addStateEd.getText().toString();
+                if(!TextUtils.isEmpty(adN) && !TextUtils.isEmpty(adH) && !TextUtils.isEmpty(adC) && !TextUtils.isEmpty(adP) && !TextUtils.isEmpty(adA) &&
+                        !TextUtils.isEmpty(adS)){
+
+                    saveAddressServer(adN, adH, adC, adP, adA, adS, profileID);
+                }else{
+                    Toast.makeText(AddaddressActivity.this, "Please Fill All Fields", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+    }
+
+    private void saveAddressServer(String adN, String adH, String adC, String adP, String adA, String adS, String profileID) {
+        StringRequest request=new StringRequest(Request.Method.POST, api, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals("1")){
+                    Toast.makeText(AddaddressActivity.this, "Address Saved", Toast.LENGTH_SHORT).show();
+
+                    Intent intent=new Intent(AddaddressActivity.this, DashActivity.class);
+                    startActivity(intent);
+
+                }else{
+                    Toast.makeText(AddaddressActivity.this, "Failed to Save Address", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data=new HashMap<>();
+                data.put("pack", getPackageName());
+                data.put("ad_name", adN);
+                data.put("ad_info", adH);
+                data.put("ad_city", adC);
+                data.put("ad_pincode", adP);
+                data.put("ad_area", adA);
+                data.put("ad_state", adS);
+                data.put("userid", profileID);
+                return data;
+            }
+        };
+        RequestQueue requestQueue=Volley.newRequestQueue(this);
+        requestQueue.add(request);
+
     }
 
     private void getDataFromPinCode(String api) {
-        // clearing our cache of request queue.
-        mRequestQueue.getCache().clear();
-
-        // below line is use to initialize our request queue.
-        RequestQueue queue = Volley.newRequestQueue(AddaddressActivity.this);
-
-        // in below line we are creating a
-        // object request using volley.
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, api, null, new Response.Listener<JSONObject>() {
+        StringRequest request=new StringRequest(Request.Method.GET, api, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
-                // inside this method we will get two methods
-                // such as on response method
-                // inside on response method we are extracting
-                // data from the json format.
+            public void onResponse(String response) {
+
                 try {
-                    // we are getting data of post office
-                    // in the form of JSON file.
-                    JSONArray postOfficeArray = response.getJSONArray("PostOffice");
-                    if (response.getString("Status").equals("Error")) {
-                        // validating if the response status is success or failure.
-                        // in this method the response status is having error and
-                        // we are setting text to TextView as invalid pincode.
-
-                    } else {
-                        // if the status is success we are calling this method
-                        // in which we are getting data from post office object
-                        // here we are calling first object of our json array.
-                       // JSONObject obj = postOfficeArray.getJSONObject(0);
-
-                        // inside our json array we are getting district name,
-                        JSONObject obj=postOfficeArray.getJSONObject(0);
-                        Log.i("name", obj.getString("Name"));
-                        // state and country from our data.
-                        String[] area=new String[postOfficeArray.length()];
-                        String state;
-                        //area[0]="Select Area";
-                        for (int i=0; i<postOfficeArray.length(); i++){
-                            JSONObject object=postOfficeArray.getJSONObject(i);
-                            area[i]=object.getString("Name");
-                            state=object.getString("State");
-                            Log.i("Name", object.getString("Name"));
-                        }
-                        ArrayAdapter<String> areaadapter=new ArrayAdapter<String>(AddaddressActivity.this, android.R.layout.simple_spinner_dropdown_item, area);
-                        addAreaEd.setAdapter(areaadapter);
-
-
-                    }
-                } catch (JSONException e) {
-                    // if we gets any error then it
-                    // will be printed in log cat.
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // below method is called if we get
-                // any error while fetching data from API.
-                // below line is use to display an error message.
-            }
-        });
-        // below line is use for adding object
-        // request to our request queue.
-        queue.add(objectRequest);
-
-    }
-
-    private void getPincodeDetails(String pincode) {
-        JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, pincode,null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    Log.i("data", response.toString());
-                    String status=response.getString("Status");
+                    JSONArray jsonArray=new JSONArray(response);
+                    String status=jsonArray.getJSONObject(0).getString("Status");
 
                     if (status.equals("Success")){
-
+                        JSONArray jsonArray1=jsonArray.getJSONObject(0).getJSONArray("PostOffice");
                         String state="";
-
-                        JSONArray jsonArray=response.getJSONArray("PostOffice");
-                        String[] area=new String[jsonArray.length()];
+                        String[] area=new String[jsonArray1.length()+1];
                         area[0]="Select Area";
-                        for (int i=0; i<jsonArray.length(); i++){
-                            JSONObject object=jsonArray.getJSONObject(i);
+                        for (int i=0; i<jsonArray1.length(); i++){
+                            JSONObject object=jsonArray1.getJSONObject(i);
                             area[i+1]=object.getString("Name");
                             state=object.getString("State");
                         }
-                        ArrayAdapter<String> areaadapter=new ArrayAdapter<String>(AddaddressActivity.this, android.R.layout.simple_spinner_dropdown_item, area);
+                        ArrayAdapter<String> areaadapter=new ArrayAdapter<String>(AddaddressActivity.this, R.layout.spinner_item, area)
+                        {
+
+                            @Override
+                            public boolean isEnabled(int position) {
+                                if (position==0){
+                                    return false;
+                                }else{
+                                    return true;
+                                }
+                            }
+                        };
                         addAreaEd.setAdapter(areaadapter);
-
-
+                        addStateEd.setText(state);
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -181,8 +204,14 @@ public class AddaddressActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        });
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
+        }){
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        RequestQueue requestQueue=Volley.newRequestQueue(this);
         requestQueue.add(request);
+
     }
 }

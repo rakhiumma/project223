@@ -28,4 +28,12 @@
         <!-- Customize your theme here. -->
         <item name="android:windowActionBarOverlay">true</item>
     </style>
+
+    <style name="SpinnerTheme">
+        <item name="android:colorBackground">@color/teal_700</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColorTertiary">@color/white</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/black</item>
+    </style>
 </resources>
