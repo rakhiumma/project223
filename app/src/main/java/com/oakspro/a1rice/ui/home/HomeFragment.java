@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -69,6 +72,8 @@ import com.oakspro.a1rice.R;
 import com.oakspro.a1rice.SignupActivity;
 import com.oakspro.a1rice.SliderImgAdapter;
 import com.oakspro.a1rice.SliderItem;
+import com.oakspro.a1rice.StoreListAdapter;
+import com.oakspro.a1rice.StoreListData;
 import com.oakspro.a1rice.databinding.FragmentHomeBinding;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -87,6 +92,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private ArrayList<CategoryListData> list_data=new ArrayList<>();
     private ArrayList<AddressData> list_address=new ArrayList<>();
+    ArrayList<StoreListData> list_stores=new ArrayList<>();
     private GridView gridView;
     AlertDialog builder2;
     String api=null;
@@ -101,7 +107,13 @@ public class HomeFragment extends Fragment {
     final static int REQUEST_LOCATION = 199;
 
     TextView addressHead, addressText;
+    TextView storescountTv;
     LinearLayout homeLL;
+    private String citymc, latmc, logmc, api_stores;
+    StoreListAdapter adapter;
+    RecyclerView storelistRecycler;
+    Boolean isLoc=false;
+    int pp=0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -114,16 +126,37 @@ public class HomeFragment extends Fragment {
 
         api=getActivity().getResources().getString(R.string.core_api)+"app_api/category_api.php";
         api_address=getActivity().getResources().getString(R.string.core_api)+"app_api/address_list_api.php";
+        api_stores=getActivity().getResources().getString(R.string.core_api)+"app_api/stores_list.php";
 
         adSlider=root.findViewById(R.id.ads_slider);
         gridView=root.findViewById(R.id.gridview_rice);
         addressHead=root.findViewById(R.id.text_head);
         addressText=root.findViewById(R.id.text_address);
         homeLL=root.findViewById(R.id.home_address_ll);
+        storescountTv=root.findViewById(R.id.stores_count_txt);
+        storelistRecycler=root.findViewById(R.id.recyclerView_stores);
+        storelistRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        gridView.setVerticalScrollBarEnabled(false);
+
+        builder2=new AlertDialog.Builder(getContext()).create();
+
+      //  alertCode();
+
+        /*
+        while (isLoc==false){
+            displayLocationSettingsRequest(getContext());
+            if (!TextUtils.isEmpty(latmc) || !TextUtils.isEmpty(citymc)){
+                isLoc=true;
+                getFromServerStores();
+            }else{
+                isLoc=false;
+            }
+        }
+
+         */
 
         getCategory_Ads();
         checkGps();
-      //  alertCode();
 
 
         homeLL.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +168,7 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+
 
     private void checkGps() {
         LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -165,6 +199,8 @@ public class HomeFragment extends Fragment {
 
              */
             displayLocationSettingsRequest(getContext());
+        }else{
+            coderLoc();
         }
     }
 
@@ -287,6 +323,10 @@ public class HomeFragment extends Fragment {
                                             latitude = locationResult.getLocations().get(latestLocationIndex).getLatitude();
                                             longitude = locationResult.getLocations().get(latestLocationIndex).getLongitude();
                                             Log.i("Location", "Lat: "+latitude+" Long: "+longitude);
+                                            logmc=String.valueOf(longitude);
+                                            latmc=String.valueOf(latitude);
+                                            isLoc=true;
+                                            getFromServerStores();
                                         }
                                     }
                                 }, Looper.getMainLooper());
@@ -314,7 +354,6 @@ public class HomeFragment extends Fragment {
     private void displayLocationSettingsRequest(Context context) {
 
         View view=LayoutInflater.from(getContext()).inflate(R.layout.location_dialog, null, true);
-        builder2=new AlertDialog.Builder(getContext()).create();
         builder2.setView(view);
         builder2.setCanceledOnTouchOutside(true);
         view.findViewById(R.id.enable_txt).setOnClickListener(new View.OnClickListener() {
@@ -323,7 +362,6 @@ public class HomeFragment extends Fragment {
 
                 builder2.dismiss();
                 builder2.cancel();
-                coderLoc();
 
                 GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
                         .addApi(LocationServices.API).build();
@@ -345,15 +383,17 @@ public class HomeFragment extends Fragment {
                         switch (status.getStatusCode()) {
                             case LocationSettingsStatusCodes.SUCCESS:
                                 Log.i("TAG", "All location settings are satisfied.");
+                                coderLoc();
                                 builder2.dismiss();
                                 builder2.cancel();
                                 break;
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 Log.i("TAG", "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+                                coderLoc();
 
                                 try {
                                     // Show the dialog by calling startResolutionForResult(), and check the result
-                                    // in onActivityResult().
+                                    //onActivityResult().
                                     status.startResolutionForResult(getActivity(),REQUEST_LOCATION);
                                 } catch (IntentSender.SendIntentException e) {
                                     Log.i("TAG", "PendingIntent unable to execute request.");
@@ -451,7 +491,13 @@ public class HomeFragment extends Fragment {
                 addressHead.setText(list_address.get(position).getAddress_name());
                 addressText.setText(list_address.get(position).getAddress_info());
                 builder2.dismiss();
+                isLoc=true;
                 bottomSheetDialog.dismiss();
+                //request for city stores
+                citymc=list_address.get(position).getAddress_city();
+                latmc=null;
+                getFromServerStores();
+
             }
         });
 
@@ -464,6 +510,90 @@ public class HomeFragment extends Fragment {
         });
 
 
+    }
+
+    private void getFromServerStores() {
+
+        if (!TextUtils.isEmpty(latmc)){
+            citymc="";
+            pp=1;
+        }else{
+            latmc="";
+            logmc="";
+            pp=2;
+        }
+        StringRequest request=new StringRequest(Request.Method.POST, api_stores, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String status=jsonObject.getString("status");
+                    if (status.equals("1")){
+
+                        list_stores.clear();
+                        JSONArray jsonArray=jsonObject.getJSONArray("stores");
+                        if (jsonArray.length()==0){
+                            storescountTv.setText("Stores Not Available");
+                        }else{
+                            storescountTv.setTextColor(Color.BLACK);
+                            storescountTv.setText(""+jsonArray.length()+" Rice stores around you");
+                        }
+                        for (int i=0; i<jsonArray.length(); i++){
+                            JSONObject object=jsonArray.getJSONObject(i);
+
+                            StoreListData storeData=new StoreListData();
+                            storeData.setCodeid(object.getString("codeid"));
+                            storeData.setName(object.getString("name"));
+                            storeData.setCaption(object.getString("caption"));
+                            storeData.setPic(object.getString("pic"));
+                            storeData.setAddress(object.getString("address"));
+                            storeData.setMobile(object.getString("mobile"));
+                            storeData.setArea(object.getString("area"));
+                            storeData.setCity(object.getString("city"));
+                            storeData.setRating(object.getString("rating"));
+                            storeData.setMin_price(object.getString("min_price"));
+                            storeData.setPstatus(object.getString("pstatus"));
+                            list_stores.add(storeData);
+                        }
+
+                        adapter=new StoreListAdapter(getContext(), list_stores);
+                        storelistRecycler.setAdapter(adapter);
+
+                    }else {
+                        Toast.makeText(getContext(), "Stores Not Available", Toast.LENGTH_SHORT).show();
+                        storescountTv.setTextColor(Color.RED);
+                        storescountTv.setText("Stores Not Available");
+                        list_stores.clear();
+                        adapter=new StoreListAdapter(getContext(), list_stores);
+                        adapter.notifyDataSetChanged();
+                        storelistRecycler.setAdapter(adapter);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data=new HashMap<>();
+                data.put("latmc", latmc);
+                data.put("logmc", logmc);
+                data.put("city", citymc);
+                data.put("pp", String.valueOf(pp).toString());
+                data.put("pack", getActivity().getPackageName());
+                return data;
+            }
+        };
+        RequestQueue requestQueue=Volley.newRequestQueue(getContext());
+        requestQueue.add(request);
     }
 
     @Override
