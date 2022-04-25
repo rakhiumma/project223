@@ -10,8 +10,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.oakspro.a1rice.ui.home.HomeFragment;
+import com.oakspro.a1rice.ui.profile.ProfileFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -44,6 +52,30 @@ public class StoreListAdapter extends RecyclerView.Adapter<StoreListAdapter.View
         holder.storeRating.setText(model.getRating());
         Picasso.get().load(img_link+model.getPic()).into(holder.storeImg);
 
+        /*
+        holder.storeItemLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProductsFragment productsFragment=new ProductsFragment();
+                FragmentManager fragmentManager=((FragmentActivity)context).getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_dash, productsFragment, "ProductFragment")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+         */
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+
+                Fragment fragment = new ProductsFragment();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).addToBackStack(null).commit();
+            }
+        });
+
     }
 
     @Override
@@ -56,6 +88,7 @@ public class StoreListAdapter extends RecyclerView.Adapter<StoreListAdapter.View
         ImageView storeImg;
         TextView storeName, storeCaption, storePrice, storeRating;
         LinearLayout storeItemLL;
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +99,8 @@ public class StoreListAdapter extends RecyclerView.Adapter<StoreListAdapter.View
             storeRating=itemView.findViewById(R.id.store_rating_txt);
             storeImg=itemView.findViewById(R.id.store_img);
             storeItemLL=itemView.findViewById(R.id.linearll);
+            cardView=itemView.findViewById(R.id.card11);
+
 
         }
     }
